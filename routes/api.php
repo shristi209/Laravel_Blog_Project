@@ -1,13 +1,10 @@
 <?php
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ApiController;
+use App\Http\Controllers\BlogController;
 
-//We are creating a POST method to insert the data. 
-Route::post('/blogcreate', [ApiController::class, 'create']);// This line point create function in the blog_api_controller(This will handle the post method);
-
-Route::get('/blogall', [ApiController::class, 'read']);
-
-Route::get('/blogbyid/{id}', [ApiController::class, 'readbyid']);
-
-Route::put('/blogupdate/{id}',[ApiController::class,'updatebyid']);
+Route::get('/blogs', [BlogController::class, 'index']);
+Route::get('/blogs/{id}', [BlogController::class, 'show']);
+Route::post('/blogs', [BlogController::class, 'store']);
+Route::put('/blogs/{id}/{category_name}', [BlogController::class, 'update']);
+Route::delete('/blogs/{id}', [BlogController::class, 'destroy']);
