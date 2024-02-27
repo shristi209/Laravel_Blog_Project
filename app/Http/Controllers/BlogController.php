@@ -6,51 +6,48 @@ use Illuminate\Http\Request;
 
 class BlogController extends Controller
 {
+
+//Post Blogs
     public function store(Request $request)
     {
         $validatedData = $request->validate([
             'title' => 'required',
             'description' => 'required',
-            'category.name' => 'required|unique:categories,name',
+            'category_id' => 'required|exists:categories,id',
         ]);
 
-    $category = \App\Models\Category::create(['name' => $validatedData['category']['name']]);
-
-    $blogData = [
-        'title' => $validatedData['title'],
-        'description' => $validatedData['description'],
-        'category_id' => $category->id,
-    ];
-
-    return \App\Models\Blog::create($blogData);
+        return Blog::create($validatedData);
     }
- 
+
+//Get all the blogs
     public function index()
     {
-        return Blog::with('category')->get();
+        return Blog::with('category:id,name')->get();
     }
 
+//Get blogs by id
     public function show($id)
     {
-        return Blog::find($id);
+        return Blog::with('category:id,name')->findOrFail($id);
     }
 
-    public function update(Request $request, $id, $category_name)
+//Update blogs
+    public function update(Request $request, $id)
     {
-        $blog = Blog::findOrFail($id);
-    
-        // Update blog post data
-        $blog->title = $request->input('title');
-        $blog->description = $request->input('description');
-        $blog->save();
+        $blog = Blog::with('category:id,name')->findOrFail($id);
 
-        // Update category name if provided
-        if (!empty($category_name)) {
-            $blog->category()->update(['name' => $category_name]);
-        }
+        $validatedData = $request->validate([
+            'title' => 'required',
+            'description' => 'required',
+            'category_id' => 'required|exists:categories,id',
+        ]);
 
-        return $blog;
+        $blog->update($validatedData);
+
+        return response()->json(['data' => $blog], 200);;
     }
+
+//Deleting blogs
     public function destroy($id)
     {
         $blog = Blog::findOrFail($id);

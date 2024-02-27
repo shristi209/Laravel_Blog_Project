@@ -9,6 +9,7 @@ class Blog extends Model
 {
     use HasFactory;
     protected $fillable = ['title', 'description', 'category_id'];
+    protected $visible = ['id', 'title', 'description', 'created_at', 'updated_at', 'category'];
 
     public function category()
     {
